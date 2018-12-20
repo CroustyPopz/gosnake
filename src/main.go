@@ -31,10 +31,13 @@ func getSprite(pic pixel.Picture, x float64, y float64) (*pixel.Sprite, error) {
 	if x > 4 || x < 0 || y > 3 || y < 0 {
 		return nil, errors.New("Index not valid")
 	}
-	spriteLength := pic.Bounds().Size().Len() / 5
 
+	spriteLength := pic.Bounds().Size().X / 5
+	fmt.Printf("x = %v | y = %v | l = %v\n", x, y, spriteLength)
 	rect := pixel.R(x*spriteLength, y*spriteLength, (x+1)*spriteLength, (y+1)*spriteLength)
 	sprite := pixel.NewSprite(pic, rect)
+
+	fmt.Printf("%v => %v", pic.Bounds(), rect)
 	return sprite, nil
 }
 
@@ -52,9 +55,8 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%v", pic.Bounds())
 
-	sprite, err := getSprite(pic, 0, 0)
+	sprite, err := getSprite(pic, 3, 3)
 
 	win.Clear(colornames.Greenyellow)
 	sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
