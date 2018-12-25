@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 
 	"image"
 	"os"
@@ -27,17 +26,26 @@ func loadPicture(path string) (pixel.Picture, error) {
 	return pixel.PictureDataFromImage(img), nil
 }
 
-func getSprite(pic pixel.Picture, x float64, y float64) (*pixel.Sprite, error) {
+func getSnakeFrames(pic pixel.Picture) []pixel.Rect {
+	var snakeFrames []pixel.Rect
+	spriteLength := pic.Bounds().Size().X / 5
+
+	for x := pic.Bounds().Min.X; x < pic.Bounds().Max.X; x += spriteLength {
+		for y := pic.Bounds().Min.Y; y < pic.Bounds().Max.Y; y += spriteLength {
+			snakeFrames = append(snakeFrames, pixel.R(x, y, x+spriteLength, y+spriteLength))
+		}
+	}
+
+	return snakeFrames
+}
+
+func getSprite(pic pixel.Picture, snakeFrames []pixel.Rect, x int, y int) (*pixel.Sprite, error) {
 	if x > 4 || x < 0 || y > 3 || y < 0 {
 		return nil, errors.New("Index not valid")
 	}
 
-	spriteLength := pic.Bounds().Size().X / 5
-	fmt.Printf("x = %v | y = %v | l = %v\n", x, y, spriteLength)
-	rect := pixel.R(x*spriteLength, y*spriteLength, (x+1)*spriteLength, (y+1)*spriteLength)
-	sprite := pixel.NewSprite(pic, rect)
+	sprite := pixel.NewSprite(pic, snakeFrames[(4*x)+y])
 
-	fmt.Printf("%v => %v", pic.Bounds(), rect)
 	return sprite, nil
 }
 
@@ -46,21 +54,42 @@ func run() {
 		Title:  "Pixel Rocks!",
 		Bounds: pixel.R(0, 0, 1024, 768),
 	}
+
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
 		panic(err)
 	}
+	win.SetSmooth(true)
 
 	pic, err := loadPicture("assets/snake.png")
+	snakeFrames := getSnakeFrames(pic)
 	if err != nil {
 		panic(err)
 	}
 
-	sprite, err := getSprite(pic, 3, 3)
+	sprite, err := getSprite(pic, snakeFrames, 3, 3)
 
-	win.Clear(colornames.Greenyellow)
-	sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
 	for !win.Closed() {
+		if win.JustPressed(pixelgl.KeyLeft) {
+			sprite, err = getSprite(pic, snakeFrames, 3, 2)
+		}
+		if win.JustPressed(pixelgl.KeyRight) {
+			sprite, err = getSprite(pic, snakeFrames, 4, 3)
+		}
+		if win.JustPressed(pixelgl.KeyUp) {
+			sprite, err = getSprite(pic, snakeFrames, 3, 3)
+		}
+		if win.JustPressed(pixelgl.KeyDown) {
+			sprite, err = getSprite(pic, snakeFrames, 4, 2)
+		}
+
+		// win.Clear(colornames.Greenyellow)
+		win.Clear(colornames.Firebrick)
+
+		mat := pixel.IM
+		mat = mat.Moved(win.Bounds().Center())
+		sprite.Draw(win, mat)
+
 		win.Update()
 	}
 }
