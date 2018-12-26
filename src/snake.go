@@ -9,15 +9,17 @@ import (
 )
 
 type Snake struct {
-	length     int
-	spriteSize float64
+	// METAS
+	length int
 
-	picture pixel.Picture
-	frames  []pixel.Rect
+	// GRAPHICS
+	picture   pixel.Picture
+	frames    []pixel.Rect
+	frameSize float64
 }
 
 func NewSnake() *Snake {
-	snake := Snake{length: 3}
+	snake := Snake{length: 3, frameSize: 64}
 	snake.loadPicture()
 	snake.setSnakeFrames()
 	return &snake
@@ -37,11 +39,9 @@ func (snake *Snake) loadPicture() {
 }
 
 func (snake *Snake) setSnakeFrames() {
-	snake.spriteSize = snake.picture.Bounds().Size().X / 5
-
-	for x := snake.picture.Bounds().Min.X; x < snake.picture.Bounds().Max.X; x += snake.spriteSize {
-		for y := snake.picture.Bounds().Min.Y; y < snake.picture.Bounds().Max.Y; y += snake.spriteSize {
-			snake.frames = append(snake.frames, pixel.R(x, y, x+snake.spriteSize, y+snake.spriteSize))
+	for x := snake.picture.Bounds().Min.X; x < snake.picture.Bounds().Max.X; x += snake.frameSize {
+		for y := snake.picture.Bounds().Min.Y; y < snake.picture.Bounds().Max.Y; y += snake.frameSize {
+			snake.frames = append(snake.frames, pixel.R(x, y, x+snake.frameSize, y+snake.frameSize))
 		}
 	}
 }
