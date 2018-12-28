@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "image/png"
+	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -38,29 +39,38 @@ func run() {
 	sprite := snake.getFrame(3, 3)
 	snakeMap := buildSnakeMap(snake.frameSize, 10)
 
-	index := 0
-	mat := pixel.IM
-	mat = mat.Moved(snakeMap[index].Center())
+	index := 45
+	move := 1
+	last := time.Now()
 
 	for !win.Closed() {
+		dt := time.Since(last).Seconds()
+		mat := pixel.IM
+
 		if win.JustPressed(pixelgl.KeyLeft) {
 			sprite = snake.getFrame(3, 2)
-			mat = mat.Moved(snakeMap[index-10].Center())
+			move = -10
 		}
 		if win.JustPressed(pixelgl.KeyRight) {
 			sprite = snake.getFrame(4, 3)
-			mat = mat.Moved(snakeMap[index+10].Center())
+			move = 10
 		}
 		if win.JustPressed(pixelgl.KeyUp) {
 			sprite = snake.getFrame(3, 3)
-			mat = mat.Moved(snakeMap[index+1].Center())
+			move = 1
 		}
 		if win.JustPressed(pixelgl.KeyDown) {
 			sprite = snake.getFrame(4, 2)
-			mat = mat.Moved(snakeMap[index-1].Center())
+			move = -1
 		}
 
 		// win.Clear(colornames.Greenyellow)
+		if dt > 0.5 {
+			index += move
+			last = time.Now()
+		}
+
+		mat = mat.Moved(snakeMap[index].Center())
 		win.Clear(colornames.Firebrick)
 		sprite.Draw(win, mat)
 		win.Update()

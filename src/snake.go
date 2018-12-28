@@ -48,7 +48,7 @@ func (snake *Snake) setSnakeFrames() {
 
 func (snake *Snake) getFrame(x int, y int) *pixel.Sprite {
 	if x > 4 || x < 0 || y > 3 || y < 0 {
-		panic(errors.New("Index not valid"))
+		panic(errors.New("Index not valid => out of range"))
 	}
 
 	sprite := pixel.NewSprite(snake.picture, snake.frames[(4*x)+y])
