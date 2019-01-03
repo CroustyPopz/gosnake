@@ -9,19 +9,6 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-func buildSnakeMap(tileSize float64, mapSize int) []pixel.Rect {
-	var snakeMap []pixel.Rect
-
-	for x := 0; x < mapSize; x++ {
-		for y := 0; y < mapSize; y++ {
-			r := pixel.R(float64(x)*tileSize, float64(y)*tileSize, (float64(x)*tileSize)+tileSize, (float64(y)*tileSize)+tileSize)
-			snakeMap = append(snakeMap, r)
-		}
-	}
-
-	return snakeMap
-}
-
 func run() {
 
 	cfg := pixelgl.WindowConfig{
@@ -36,43 +23,24 @@ func run() {
 	win.SetSmooth(true)
 
 	snake := NewSnake()
-	sprite := snake.getFrame(3, 3)
-	snakeMap := buildSnakeMap(snake.frameSize, 10)
-
-	index := 45
-	move := 1
-	last := time.Now()
+	snake.sprites[0].sprite = snake.getFrame(3, 3)
+	snakeMap := NewSnakeMap(snake.frameSize, 10)
 
 	for !win.Closed() {
-		dt := time.Since(last).Seconds()
+		snakeMap.dt = time.Since(snakeMap.last).Seconds()
 		mat := pixel.IM
 
-		if win.JustPressed(pixelgl.KeyLeft) {
-			sprite = snake.getFrame(3, 2)
-			move = -10
-		}
-		if win.JustPressed(pixelgl.KeyRight) {
-			sprite = snake.getFrame(4, 3)
-			move = 10
-		}
-		if win.JustPressed(pixelgl.KeyUp) {
-			sprite = snake.getFrame(3, 3)
-			move = 1
-		}
-		if win.JustPressed(pixelgl.KeyDown) {
-			sprite = snake.getFrame(4, 2)
-			move = -1
-		}
+		snakeMap.handleKeys(snake, win)
 
 		// win.Clear(colornames.Greenyellow)
-		if dt > 0.5 {
-			index += move
-			last = time.Now()
+		if snakeMap.dt > 0.5 {
+			snakeMap.index += snakeMap.move
+			snakeMap.last = time.Now()
 		}
 
-		mat = mat.Moved(snakeMap[index].Center())
+		mat = mat.Moved(snakeMap.snakeMap[snakeMap.index].Center())
 		win.Clear(colornames.Firebrick)
-		sprite.Draw(win, mat)
+		snake.sprites[0].sprite.Draw(win, mat)
 		win.Update()
 	}
 }

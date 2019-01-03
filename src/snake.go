@@ -2,24 +2,29 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"image"
 	"os"
 
 	"github.com/faiface/pixel"
 )
 
-type Snake struct {
-	// METAS
-	length int
+// This struct manage which frame to used and its matrix
+type SnakePiece struct {
+	sprite *pixel.Sprite
+	mat    pixel.Matrix
+}
 
-	// GRAPHICS
+// This struct is used to manage the all snake
+type Snake struct {
+	sprites   [1]SnakePiece // Rendered frames
 	picture   pixel.Picture
 	frames    []pixel.Rect
 	frameSize float64
 }
 
 func NewSnake() *Snake {
-	snake := Snake{length: 3, frameSize: 64}
+	snake := Snake{frameSize: 64}
 	snake.loadPicture()
 	snake.setSnakeFrames()
 	return &snake
@@ -51,6 +56,6 @@ func (snake *Snake) getFrame(x int, y int) *pixel.Sprite {
 		panic(errors.New("Index not valid => out of range"))
 	}
 
-	sprite := pixel.NewSprite(snake.picture, snake.frames[(4*x)+y])
-	return sprite
+	fmt.Printf("%v\n", (4*x)+y)
+	return pixel.NewSprite(snake.picture, snake.frames[(4*x)+y])
 }
