@@ -11,13 +11,16 @@ import (
 
 // This struct manage which frame to used and its matrix
 type SnakePiece struct {
+	x int
+	y int
+
 	sprite *pixel.Sprite
 	mat    pixel.Matrix
 }
 
 // This struct is used to manage the all snake
 type Snake struct {
-	sprites   [1]SnakePiece // Rendered frames
+	sprites   [3]SnakePiece // Rendered frames
 	picture   pixel.Picture
 	frames    []pixel.Rect
 	frameSize float64
@@ -28,6 +31,12 @@ func NewSnake() *Snake {
 	snake.loadPicture()
 	snake.setSnakeFrames()
 	return &snake
+}
+
+func (snake *Snake) initPositions(x int, y int) {
+	snake.sprites[0] = SnakePiece{x: x, y: y, sprite: snake.getFrame(3, 3), mat: pixel.IM}
+	snake.sprites[1] = SnakePiece{x: x, y: y - 1, sprite: snake.getFrame(2, 2), mat: pixel.IM}
+	snake.sprites[2] = SnakePiece{x: 0, y: y - 2, sprite: snake.getFrame(3, 1), mat: pixel.IM}
 }
 
 func (snake *Snake) loadPicture() {

@@ -22,7 +22,7 @@ type SnakeMap struct {
 }
 
 func NewSnakeMap(tileSize float64, mapSize int) *SnakeMap {
-	snakeMap := SnakeMap{index: 45, move: 1, last: time.Now(), dt: 0}
+	snakeMap := SnakeMap{index: (mapSize * 4) + 4, move: 1, last: time.Now(), dt: 0}
 	snakeMap.buildSnakeMap(tileSize, mapSize)
 
 	return &snakeMap
@@ -30,19 +30,15 @@ func NewSnakeMap(tileSize float64, mapSize int) *SnakeMap {
 
 func (snakeMap *SnakeMap) handleKeys(snake *Snake, win *pixelgl.Window) {
 	if win.JustPressed(pixelgl.KeyLeft) {
-		snake.sprites[0].sprite = snake.getFrame(3, 2)
 		snakeMap.move = -10
 	}
 	if win.JustPressed(pixelgl.KeyRight) {
-		snake.sprites[0].sprite = snake.getFrame(4, 3)
 		snakeMap.move = 10
 	}
 	if win.JustPressed(pixelgl.KeyUp) {
-		snake.sprites[0].sprite = snake.getFrame(3, 3)
 		snakeMap.move = 1
 	}
 	if win.JustPressed(pixelgl.KeyDown) {
-		snake.sprites[0].sprite = snake.getFrame(4, 2)
 		snakeMap.move = -1
 	}
 }
@@ -54,5 +50,19 @@ func (snakeMap *SnakeMap) buildSnakeMap(tileSize float64, mapSize int) {
 			r := pixel.R(float64(x)*tileSize, float64(y)*tileSize, (float64(x)*tileSize)+tileSize, (float64(y)*tileSize)+tileSize)
 			snakeMap.snakeMap = append(snakeMap.snakeMap, r)
 		}
+	}
+}
+
+// get the move value and loop through the snake pieces
+func (snakeMap *SnakeMap) moveSnake(snake *Snake) {
+	switch snakeMap.move {
+	case -10:
+		snake.sprites[0].sprite = snake.getFrame(3, 2)
+	case 10:
+		snake.sprites[0].sprite = snake.getFrame(4, 3)
+	case 1:
+		snake.sprites[0].sprite = snake.getFrame(3, 3)
+	case -1:
+		snake.sprites[0].sprite = snake.getFrame(4, 2)
 	}
 }

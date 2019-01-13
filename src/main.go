@@ -23,24 +23,25 @@ func run() {
 	win.SetSmooth(true)
 
 	snake := NewSnake()
-	snake.sprites[0].sprite = snake.getFrame(3, 3)
+	snake.initPositions(4, 4)
 	snakeMap := NewSnakeMap(snake.frameSize, 10)
 
 	for !win.Closed() {
 		snakeMap.dt = time.Since(snakeMap.last).Seconds()
-		mat := pixel.IM
+		snake.sprites[0].mat = pixel.IM
 
 		snakeMap.handleKeys(snake, win)
 
 		// win.Clear(colornames.Greenyellow)
 		if snakeMap.dt > 0.5 {
 			snakeMap.index += snakeMap.move
+			snakeMap.moveSnake(snake)
 			snakeMap.last = time.Now()
 		}
 
-		mat = mat.Moved(snakeMap.snakeMap[snakeMap.index].Center())
+		snake.sprites[0].mat = snake.sprites[0].mat.Moved(snakeMap.snakeMap[snakeMap.index].Center())
 		win.Clear(colornames.Firebrick)
-		snake.sprites[0].sprite.Draw(win, mat)
+		snake.sprites[0].sprite.Draw(win, snake.sprites[0].mat)
 		win.Update()
 	}
 }
