@@ -28,20 +28,21 @@ func run() {
 
 	for !win.Closed() {
 		snakeMap.dt = time.Since(snakeMap.last).Seconds()
-		snake.sprites[0].mat = pixel.IM
+		snake.initMatrix()
 
-		snakeMap.handleKeys(snake, win)
+		// Detect move actions
+		snakeMap.handleKeys(win)
 
-		// win.Clear(colornames.Greenyellow)
+		// Turn management
 		if snakeMap.dt > 0.5 {
 			snakeMap.index += snakeMap.move
-			snakeMap.moveSnake(snake)
+			snake.moveSnake(snakeMap) // change positions and sprites of the snake
 			snakeMap.last = time.Now()
 		}
 
-		snake.sprites[0].mat = snake.sprites[0].mat.Moved(snakeMap.snakeMap[snakeMap.index].Center())
+		// win.Clear(colornames.Greenyellow)
 		win.Clear(colornames.Firebrick)
-		snake.sprites[0].sprite.Draw(win, snake.sprites[0].mat)
+		snake.Draw(snakeMap, win)
 		win.Update()
 	}
 }

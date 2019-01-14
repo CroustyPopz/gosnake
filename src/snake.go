@@ -2,11 +2,11 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"image"
 	"os"
 
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 // This struct manage which frame to used and its matrix
@@ -36,7 +36,13 @@ func NewSnake() *Snake {
 func (snake *Snake) initPositions(x int, y int) {
 	snake.sprites[0] = SnakePiece{x: x, y: y, sprite: snake.getFrame(3, 3), mat: pixel.IM}
 	snake.sprites[1] = SnakePiece{x: x, y: y - 1, sprite: snake.getFrame(2, 2), mat: pixel.IM}
-	snake.sprites[2] = SnakePiece{x: 0, y: y - 2, sprite: snake.getFrame(3, 1), mat: pixel.IM}
+	snake.sprites[2] = SnakePiece{x: x, y: y - 2, sprite: snake.getFrame(3, 1), mat: pixel.IM}
+}
+
+func (snake *Snake) initMatrix() {
+	for i := 0; i < len(snake.sprites); i++ {
+		snake.sprites[i].mat = pixel.IM
+	}
 }
 
 func (snake *Snake) loadPicture() {
@@ -65,6 +71,29 @@ func (snake *Snake) getFrame(x int, y int) *pixel.Sprite {
 		panic(errors.New("Index not valid => out of range"))
 	}
 
-	fmt.Printf("%v\n", (4*x)+y)
 	return pixel.NewSprite(snake.picture, snake.frames[(4*x)+y])
+}
+
+func (snake *Snake) Draw(snakeMap *SnakeMap, win *pixelgl.Window) {
+	for i := 0; i < len(snake.sprites); i++ {
+		x := snake.sprites[i].x
+		y := snake.sprites[i].y
+
+		snake.sprites[i].mat = snake.sprites[i].mat.Moved(snakeMap.snakeMap[(10*x)+y].Center())
+		snake.sprites[i].sprite.Draw(win, snake.sprites[i].mat)
+	}
+}
+
+// get the move value and loop through the snake pieces
+func (snake *Snake) moveSnake(snakeMap *SnakeMap) {
+	switch snakeMap.move {
+	case -10:
+		snake.sprites[0].sprite = snake.getFrame(3, 2)
+	case 10:
+		snake.sprites[0].sprite = snake.getFrame(4, 3)
+	case 1:
+		snake.sprites[0].sprite = snake.getFrame(3, 3)
+	case -1:
+		snake.sprites[0].sprite = snake.getFrame(4, 2)
+	}
 }
