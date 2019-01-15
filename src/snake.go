@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"image"
 	"os"
 
@@ -111,67 +112,73 @@ func (snake *Snake) Move(index int, prevX int, prevY int, prevSprite *pixel.Spri
 	snake.Move(index+1, snake.sprites[index].x, snake.sprites[index].y, snake.sprites[index].sprite)
 	snake.sprites[index].x = prevX
 	snake.sprites[index].y = prevY
-
-	// Tail
-	if index == (len(snake.sprites) - 1) {
-		// Up
-		if snake.sprites[index-1].y > snake.sprites[index].y {
-			snake.sprites[index].sprite = snake.getFrame(3, 1)
-
-			// Down
-		} else if snake.sprites[index-1].y < snake.sprites[index].y {
-			snake.sprites[index].sprite = snake.getFrame(4, 0)
-
-			// Right
-		} else if snake.sprites[index-1].x > snake.sprites[index].x {
-			snake.sprites[index].sprite = snake.getFrame(4, 1)
-
-			// Left
-		} else {
-			snake.sprites[index].sprite = snake.getFrame(3, 0)
-		}
-		// Body
-	} else {
-		// Vertical Up
-		if (snake.sprites[index-1].y > snake.sprites[index].y) && (snake.sprites[index].y > snake.sprites[index+1].y) {
-			snake.sprites[index].sprite = snake.getFrame(2, 2)
-
-			// Vertical Down
-		} else if (snake.sprites[index-1].y < snake.sprites[index].y) && (snake.sprites[index].y < snake.sprites[index+1].y) {
-			snake.sprites[index].sprite = snake.getFrame(2, 2)
-
-			// Horizontal Right
-		} else if (snake.sprites[index-1].x > snake.sprites[index].x) && (snake.sprites[index].x > snake.sprites[index+1].x) {
-			snake.sprites[index].sprite = snake.getFrame(1, 3)
-
-			// Horizontal Left
-		} else if (snake.sprites[index-1].x < snake.sprites[index].x) && (snake.sprites[index].x < snake.sprites[index+1].x) {
-			snake.sprites[index].sprite = snake.getFrame(1, 3)
-
-			// Angle Up Right
-		} else if (snake.sprites[index-1].x > snake.sprites[index].x) && (snake.sprites[index].y > snake.sprites[index+1].y) {
-			snake.sprites[index].sprite = snake.getFrame(0, 3)
-
-			// Angle Up Left
-		} else if (snake.sprites[index-1].x < snake.sprites[index].x) && (snake.sprites[index].y > snake.sprites[index+1].y) {
-			snake.sprites[index].sprite = snake.getFrame(2, 3)
-
-			// Angle Down Right
-		} else if (snake.sprites[index-1].x > snake.sprites[index].x) && (snake.sprites[index].y < snake.sprites[index+1].y) {
-			snake.sprites[index].sprite = snake.getFrame(0, 2)
-
-			// Angle Down Left
-		} else {
-			snake.sprites[index].sprite = snake.getFrame(2, 1)
-		}
-	}
 }
 
-func (snake *Snake) selectFrame(index int) {
-	// directionX := snake.sprites[index-1].x - snake.sprites[index+1].x
-	// directionY := snake.sprites[index-1].y - snake.sprites[index+1].y
+func (snake *Snake) render() {
+	for index := 1; index < len(snake.sprites); index++ {
+		// Tail
+		if index == (len(snake.sprites) - 1) {
+			// Up
+			fmt.Print("--------------\n")
+			fmt.Printf("index-1: %v, %v\n", snake.sprites[index-1].x, snake.sprites[index-1].y)
+			fmt.Printf("index: %v, %v\n", snake.sprites[index].x, snake.sprites[index].y)
 
-	// if directionX ==  && directionY == 0 {
+			if snake.sprites[index-1].y > snake.sprites[index].y {
+				snake.sprites[index].sprite = snake.getFrame(3, 1)
 
-	// }
+				// Down
+			} else if snake.sprites[index-1].y < snake.sprites[index].y {
+				snake.sprites[index].sprite = snake.getFrame(4, 0)
+
+				// Right
+			} else if snake.sprites[index-1].x > snake.sprites[index].x {
+				snake.sprites[index].sprite = snake.getFrame(4, 1)
+
+				// Left
+			} else {
+				snake.sprites[index].sprite = snake.getFrame(3, 0)
+			}
+			// Body
+		} else {
+			// Vertical Up
+			if (snake.sprites[index-1].y > snake.sprites[index].y) && (snake.sprites[index].y > snake.sprites[index+1].y) {
+				snake.sprites[index].sprite = snake.getFrame(2, 2)
+
+				// Vertical Down
+			} else if (snake.sprites[index-1].y < snake.sprites[index].y) && (snake.sprites[index].y < snake.sprites[index+1].y) {
+				snake.sprites[index].sprite = snake.getFrame(2, 2)
+
+				// Horizontal Right
+			} else if (snake.sprites[index-1].x > snake.sprites[index].x) && (snake.sprites[index].x > snake.sprites[index+1].x) {
+				snake.sprites[index].sprite = snake.getFrame(1, 3)
+
+				// Horizontal Left
+			} else if (snake.sprites[index-1].x < snake.sprites[index].x) && (snake.sprites[index].x < snake.sprites[index+1].x) {
+				snake.sprites[index].sprite = snake.getFrame(1, 3)
+
+				// Angle Up Right
+			} else if ((snake.sprites[index-1].x > snake.sprites[index].x) && (snake.sprites[index].y > snake.sprites[index+1].y)) ||
+				((snake.sprites[index-1].y < snake.sprites[index].y) && (snake.sprites[index].x < snake.sprites[index+1].x)) {
+				snake.sprites[index].sprite = snake.getFrame(0, 3)
+				fmt.Print("Angle Up Right\n")
+
+				// Angle Up Left
+			} else if ((snake.sprites[index-1].x < snake.sprites[index].x) && (snake.sprites[index].y > snake.sprites[index+1].y)) ||
+				((snake.sprites[index-1].y < snake.sprites[index].y) && (snake.sprites[index].x > snake.sprites[index+1].x)) {
+				snake.sprites[index].sprite = snake.getFrame(2, 3)
+				fmt.Print("Angle Up Left\n")
+
+				// Angle Down Right
+			} else if ((snake.sprites[index-1].x > snake.sprites[index].x) && (snake.sprites[index].y < snake.sprites[index+1].y)) ||
+				((snake.sprites[index-1].y > snake.sprites[index].y) && (snake.sprites[index].x < snake.sprites[index+1].x)) {
+				snake.sprites[index].sprite = snake.getFrame(0, 2)
+				fmt.Print("Angle Down Right\n")
+
+				// Angle Down Left
+			} else {
+				snake.sprites[index].sprite = snake.getFrame(2, 1)
+				fmt.Print("Angle Down Left\n")
+			}
+		}
+	}
 }

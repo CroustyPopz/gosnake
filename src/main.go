@@ -37,6 +37,7 @@ func run() {
 		if snakeMap.dt > 0.5 {
 			snakeMap.index += snakeMap.move
 			snake.moveSnake(snakeMap) // change positions and sprites of the snake
+			snake.render()            // set the rights frames for the snake's body
 			snakeMap.last = time.Now()
 		}
 
