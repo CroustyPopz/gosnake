@@ -20,7 +20,7 @@ type SnakePiece struct {
 
 // This struct is used to manage the all snake
 type Snake struct {
-	sprites   [3]SnakePiece // Rendered frames
+	sprites   []SnakePiece // Rendered frames
 	picture   pixel.Picture
 	frames    []pixel.Rect
 	frameSize float64
@@ -34,9 +34,13 @@ func NewSnake() *Snake {
 }
 
 func (snake *Snake) initPositions(x int, y int) {
-	snake.sprites[0] = SnakePiece{x: x, y: y, sprite: snake.getFrame(3, 3), mat: pixel.IM}
-	snake.sprites[1] = SnakePiece{x: x, y: y - 1, sprite: snake.getFrame(2, 2), mat: pixel.IM}
-	snake.sprites[2] = SnakePiece{x: x, y: y - 2, sprite: snake.getFrame(3, 1), mat: pixel.IM}
+	snake.sprites = append(snake.sprites, SnakePiece{x: x, y: y, sprite: snake.getFrame(3, 3), mat: pixel.IM})
+	snake.sprites = append(snake.sprites, SnakePiece{x: x, y: y - 1, sprite: snake.getFrame(2, 2), mat: pixel.IM})
+	snake.sprites = append(snake.sprites, SnakePiece{x: x, y: y - 2, sprite: snake.getFrame(3, 1), mat: pixel.IM})
+}
+
+func (snake *Snake) grow() {
+	snake.sprites = append(snake.sprites, SnakePiece{x: 0, y: 0, sprite: snake.getFrame(0, 0), mat: pixel.IM})
 }
 
 func (snake *Snake) initMatrix() {

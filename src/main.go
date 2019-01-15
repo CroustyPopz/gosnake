@@ -36,17 +36,18 @@ func run() {
 
 		// Turn management
 		if snakeMap.dt > 0.5 {
+			apple.resetPositions()
+			apple.beEaten(snake)
 			snake.moveSnake(snakeMap) // change positions and head's sprites of the snake
 			snake.setFrames()         // set the rights frames for the snake's body
-			apple.resetPositions()
 			snakeMap.last = time.Now()
 		}
 
-		win.Clear(colornames.Greenyellow)
-		// win.Clear(colornames.Firebrick)
+		// win.Clear(colornames.Greenyellow)
+		win.Clear(colornames.Firebrick)
 
-		snake.Draw(snakeMap, win)
 		apple.Draw(snakeMap, win)
+		snake.Draw(snakeMap, win)
 		win.Update()
 	}
 }

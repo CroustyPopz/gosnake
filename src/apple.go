@@ -31,7 +31,16 @@ func (apple *Apple) resetPositions() {
 }
 
 func (apple *Apple) Draw(snakeMap *SnakeMap, win *pixelgl.Window) {
-	apple.mat = pixel.IM
-	apple.mat = apple.mat.Moved(snakeMap.snakeMap[(10*apple.x)+apple.y].Center())
-	apple.sprite.Draw(win, apple.mat)
+	if apple.eaten == false {
+		apple.mat = pixel.IM
+		apple.mat = apple.mat.Moved(snakeMap.snakeMap[(10*apple.x)+apple.y].Center())
+		apple.sprite.Draw(win, apple.mat)
+	}
+}
+
+func (apple *Apple) beEaten(snake *Snake) {
+	if apple.x == snake.sprites[0].x && apple.y == snake.sprites[0].y {
+		apple.eaten = true
+		snake.grow()
+	}
 }
