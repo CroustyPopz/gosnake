@@ -23,6 +23,7 @@ func run() {
 	win.SetSmooth(true)
 
 	snake := NewSnake()
+	apple := NewApple(snake)
 	snake.initPositions(4, 4)
 	snakeMap := NewSnakeMap(snake.frameSize, 10)
 
@@ -35,15 +36,17 @@ func run() {
 
 		// Turn management
 		if snakeMap.dt > 0.5 {
-			snakeMap.index += snakeMap.move
-			snake.moveSnake(snakeMap) // change positions and sprites of the snake
-			snake.render()            // set the rights frames for the snake's body
+			snake.moveSnake(snakeMap) // change positions and head's sprites of the snake
+			snake.setFrames()         // set the rights frames for the snake's body
+			apple.resetPositions()
 			snakeMap.last = time.Now()
 		}
 
-		// win.Clear(colornames.Greenyellow)
-		win.Clear(colornames.Firebrick)
+		win.Clear(colornames.Greenyellow)
+		// win.Clear(colornames.Firebrick)
+
 		snake.Draw(snakeMap, win)
+		apple.Draw(snakeMap, win)
 		win.Update()
 	}
 }

@@ -13,8 +13,7 @@ type SnakeMap struct {
 	snakeMap []pixel.Rect
 
 	// SNAKE POSITION
-	index int
-	move  int
+	move int
 
 	// LOOP MANAGERS
 	last time.Time
@@ -22,7 +21,7 @@ type SnakeMap struct {
 }
 
 func NewSnakeMap(tileSize float64, mapSize int) *SnakeMap {
-	snakeMap := SnakeMap{index: (mapSize * 4) + 4, move: 1, last: time.Now(), dt: 0}
+	snakeMap := SnakeMap{move: 1, last: time.Now(), dt: 0}
 	snakeMap.buildSnakeMap(tileSize, mapSize)
 
 	return &snakeMap

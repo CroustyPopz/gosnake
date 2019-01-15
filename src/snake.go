@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"image"
 	"os"
 
@@ -114,14 +113,14 @@ func (snake *Snake) Move(index int, prevX int, prevY int, prevSprite *pixel.Spri
 	snake.sprites[index].y = prevY
 }
 
-func (snake *Snake) render() {
+func (snake *Snake) setFrames() {
 	for index := 1; index < len(snake.sprites); index++ {
 		// Tail
 		if index == (len(snake.sprites) - 1) {
 			// Up
-			fmt.Print("--------------\n")
-			fmt.Printf("index-1: %v, %v\n", snake.sprites[index-1].x, snake.sprites[index-1].y)
-			fmt.Printf("index: %v, %v\n", snake.sprites[index].x, snake.sprites[index].y)
+			// fmt.Print("--------------\n")
+			// fmt.Printf("index-1: %v, %v\n", snake.sprites[index-1].x, snake.sprites[index-1].y)
+			// fmt.Printf("index: %v, %v\n", snake.sprites[index].x, snake.sprites[index].y)
 
 			if snake.sprites[index-1].y > snake.sprites[index].y {
 				snake.sprites[index].sprite = snake.getFrame(3, 1)
@@ -160,24 +159,20 @@ func (snake *Snake) render() {
 			} else if ((snake.sprites[index-1].x > snake.sprites[index].x) && (snake.sprites[index].y > snake.sprites[index+1].y)) ||
 				((snake.sprites[index-1].y < snake.sprites[index].y) && (snake.sprites[index].x < snake.sprites[index+1].x)) {
 				snake.sprites[index].sprite = snake.getFrame(0, 3)
-				fmt.Print("Angle Up Right\n")
 
 				// Angle Up Left
 			} else if ((snake.sprites[index-1].x < snake.sprites[index].x) && (snake.sprites[index].y > snake.sprites[index+1].y)) ||
 				((snake.sprites[index-1].y < snake.sprites[index].y) && (snake.sprites[index].x > snake.sprites[index+1].x)) {
 				snake.sprites[index].sprite = snake.getFrame(2, 3)
-				fmt.Print("Angle Up Left\n")
 
 				// Angle Down Right
 			} else if ((snake.sprites[index-1].x > snake.sprites[index].x) && (snake.sprites[index].y < snake.sprites[index+1].y)) ||
 				((snake.sprites[index-1].y > snake.sprites[index].y) && (snake.sprites[index].x < snake.sprites[index+1].x)) {
 				snake.sprites[index].sprite = snake.getFrame(0, 2)
-				fmt.Print("Angle Down Right\n")
 
 				// Angle Down Left
 			} else {
 				snake.sprites[index].sprite = snake.getFrame(2, 1)
-				fmt.Print("Angle Down Left\n")
 			}
 		}
 	}
