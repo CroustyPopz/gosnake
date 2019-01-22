@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "image/png"
+	"os"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -32,10 +33,13 @@ func run() {
 		snake.initMatrix()
 
 		// Detect move actions
-		snakeMap.handleKeys(win)
+		snakeMap.handleKeys(win, snake)
 
 		// Turn management
 		if snakeMap.dt > 0.5 {
+			if snakeMap.gameover {
+				os.Exit(0)
+			}
 			apple.resetPositions()
 			apple.beEaten(snake)
 			snake.moveSnake(snakeMap) // change positions and head's sprites of the snake

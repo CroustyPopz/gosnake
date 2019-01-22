@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"image"
 	"os"
 
@@ -79,7 +80,7 @@ func (snake *Snake) getFrame(x int, y int) *pixel.Sprite {
 }
 
 func (snake *Snake) Draw(snakeMap *SnakeMap, win *pixelgl.Window) {
-	for i := 0; i < len(snake.sprites); i++ {
+	for i := len(snake.sprites) - 1; i >= 0; i-- {
 		x := snake.sprites[i].x
 		y := snake.sprites[i].y
 
@@ -88,20 +89,38 @@ func (snake *Snake) Draw(snakeMap *SnakeMap, win *pixelgl.Window) {
 	}
 }
 
+func (snake *Snake) isPresent(x int, y int) bool {
+	for i := 0; i < len(snake.sprites); i++ {
+		if snake.sprites[i].x == x && snake.sprites[i].y == y {
+			fmt.Print("You ate yourself! Game oveR...")
+			return true
+		}
+	}
+	return false
+}
+
 // get the move value and loop through the snake pieces
 func (snake *Snake) moveSnake(snakeMap *SnakeMap) {
 	snake.Move(1, snake.sprites[0].x, snake.sprites[0].y, snake.sprites[0].sprite)
 	switch snakeMap.move {
 	case -10:
+		snakeMap.gameover = snake.isPresent(snake.sprites[0].x-1, snake.sprites[0].y)
+		snakeMap.gameover = snakeMap.isOutside(snake.sprites[0].x-1, snake.sprites[0].y)
 		snake.sprites[0].sprite = snake.getFrame(3, 2)
 		snake.sprites[0].x += -1
 	case 10:
+		snakeMap.gameover = snake.isPresent(snake.sprites[0].x+1, snake.sprites[0].y)
+		snakeMap.gameover = snakeMap.isOutside(snake.sprites[0].x+1, snake.sprites[0].y)
 		snake.sprites[0].sprite = snake.getFrame(4, 3)
 		snake.sprites[0].x += 1
 	case 1:
+		snakeMap.gameover = snake.isPresent(snake.sprites[0].x, snake.sprites[0].y+1)
+		snakeMap.gameover = snakeMap.isOutside(snake.sprites[0].x, snake.sprites[0].y+1)
 		snake.sprites[0].sprite = snake.getFrame(3, 3)
 		snake.sprites[0].y += 1
 	case -1:
+		snakeMap.gameover = snake.isPresent(snake.sprites[0].x, snake.sprites[0].y-1)
+		snakeMap.gameover = snakeMap.isOutside(snake.sprites[0].x, snake.sprites[0].y-1)
 		snake.sprites[0].sprite = snake.getFrame(4, 2)
 		snake.sprites[0].y += -1
 	}
