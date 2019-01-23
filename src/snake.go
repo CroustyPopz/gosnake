@@ -80,12 +80,21 @@ func (snake *Snake) getFrame(x int, y int) *pixel.Sprite {
 }
 
 func (snake *Snake) Draw(snakeMap *SnakeMap, win *pixelgl.Window) {
-	for i := len(snake.sprites) - 1; i >= 0; i-- {
+	for i := len(snake.sprites) - 1; i > 0; i-- {
 		x := snake.sprites[i].x
 		y := snake.sprites[i].y
 
 		snake.sprites[i].mat = snake.sprites[i].mat.Moved(snakeMap.snakeMap[(10*x)+y].Center())
 		snake.sprites[i].sprite.Draw(win, snake.sprites[i].mat)
+	}
+	if snake.sprites[0].x > 9 || snake.sprites[0].y > 9 || snake.sprites[0].x < 0 || snake.sprites[0].y < 0 {
+		return
+	} else {
+		x := snake.sprites[0].x
+		y := snake.sprites[0].y
+
+		snake.sprites[0].mat = snake.sprites[0].mat.Moved(snakeMap.snakeMap[(10*x)+y].Center())
+		snake.sprites[0].sprite.Draw(win, snake.sprites[0].mat)
 	}
 }
 
