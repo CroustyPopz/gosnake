@@ -35,6 +35,7 @@ func NewSnake() *Snake {
 }
 
 func (snake *Snake) initPositions(x int, y int) {
+	snake.sprites = nil
 	snake.sprites = append(snake.sprites, SnakePiece{x: x, y: y, sprite: snake.getFrame(3, 3), mat: pixel.IM})
 	snake.sprites = append(snake.sprites, SnakePiece{x: x, y: y - 1, sprite: snake.getFrame(2, 2), mat: pixel.IM})
 	snake.sprites = append(snake.sprites, SnakePiece{x: x, y: y - 2, sprite: snake.getFrame(3, 1), mat: pixel.IM})
@@ -84,16 +85,18 @@ func (snake *Snake) Draw(snakeMap *SnakeMap, win *pixelgl.Window) {
 		x := snake.sprites[i].x
 		y := snake.sprites[i].y
 
-		snake.sprites[i].mat = snake.sprites[i].mat.Moved(snakeMap.snakeMap[(10*x)+y].Center())
+		snake.sprites[i].mat = snake.sprites[i].mat.Moved(snakeMap.snakeMap[(snakeMap.mapSize*x)+y].Center())
 		snake.sprites[i].sprite.Draw(win, snake.sprites[i].mat)
 	}
-	if snake.sprites[0].x > 9 || snake.sprites[0].y > 9 || snake.sprites[0].x < 0 || snake.sprites[0].y < 0 {
+
+	// Inspect if the snake's head is outside the map
+	if snake.sprites[0].x > snakeMap.mapSize-1 || snake.sprites[0].y > snakeMap.mapSize-1 || snake.sprites[0].x < 0 || snake.sprites[0].y < 0 {
 		return
 	} else {
 		x := snake.sprites[0].x
 		y := snake.sprites[0].y
 
-		snake.sprites[0].mat = snake.sprites[0].mat.Moved(snakeMap.snakeMap[(10*x)+y].Center())
+		snake.sprites[0].mat = snake.sprites[0].mat.Moved(snakeMap.snakeMap[(snakeMap.mapSize*x)+y].Center())
 		snake.sprites[0].sprite.Draw(win, snake.sprites[0].mat)
 	}
 }
@@ -101,7 +104,7 @@ func (snake *Snake) Draw(snakeMap *SnakeMap, win *pixelgl.Window) {
 func (snake *Snake) isPresent(x int, y int) bool {
 	for i := 0; i < len(snake.sprites); i++ {
 		if snake.sprites[i].x == x && snake.sprites[i].y == y {
-			fmt.Print("You ate yourself! Game oveR...")
+			fmt.Print("You ate yourself! Game oveR...\n")
 			return true
 		}
 	}

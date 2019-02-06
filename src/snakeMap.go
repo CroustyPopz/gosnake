@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -11,6 +12,7 @@ import (
 // This struct is used to manage the core game
 type SnakeMap struct {
 	gameover bool
+	score    int
 
 	// MAP
 	mapSize  int
@@ -25,13 +27,22 @@ type SnakeMap struct {
 }
 
 func NewSnakeMap(tileSize float64, mapSize int) *SnakeMap {
-	snakeMap := SnakeMap{gameover: false, mapSize: 10, move: 1, last: time.Now(), dt: 0}
-	snakeMap.buildSnakeMap(tileSize, mapSize)
+	snakeMap := SnakeMap{gameover: false, score: 0, mapSize: mapSize, move: 1, last: time.Now(), dt: 0}
+	snakeMap.buildSnakeMap(tileSize)
 
 	return &snakeMap
 }
 
 func (snakeMap *SnakeMap) handleKeys(win *pixelgl.Window, snake *Snake) {
+	if win.Pressed(pixelgl.KeyEnter) && snakeMap.gameover == true {
+		snakeMap.gameover = false
+		snakeMap.score = 0
+		snake.initPositions(9, 9)
+		snakeMap.move = 1
+	}
+	if win.Pressed(pixelgl.KeyEscape) {
+		os.Exit(0)
+	}
 	if win.JustPressed(pixelgl.KeyLeft) {
 		if snake.sprites[1].x == snake.sprites[0].x-1 && snake.sprites[1].y == snake.sprites[0].y {
 			return
@@ -58,9 +69,9 @@ func (snakeMap *SnakeMap) handleKeys(win *pixelgl.Window, snake *Snake) {
 	}
 }
 
-func (snakeMap *SnakeMap) buildSnakeMap(tileSize float64, mapSize int) {
-	for x := 0; x < mapSize; x++ {
-		for y := 0; y < mapSize; y++ {
+func (snakeMap *SnakeMap) buildSnakeMap(tileSize float64) {
+	for x := 0; x < snakeMap.mapSize; x++ {
+		for y := 0; y < snakeMap.mapSize; y++ {
 			r := pixel.R(float64(x)*tileSize, float64(y)*tileSize, (float64(x)*tileSize)+tileSize, (float64(y)*tileSize)+tileSize)
 			snakeMap.snakeMap = append(snakeMap.snakeMap, r)
 		}
@@ -72,5 +83,5 @@ func (snakeMap *SnakeMap) isOutside(x int, y int) bool {
 		fmt.Print("You're out of the map! Game oveR...")
 		return true
 	}
-	return false
+	return snakeMap.gameover
 }
